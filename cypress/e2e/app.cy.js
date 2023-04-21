@@ -677,4 +677,61 @@ describe('TodoMVC - React', function () {
       })
     })
   })
+
+//my test
+// 1. Verify that completed items are properly displayed with a line-through style:
+it('Displays completed items with a line-through style', () => {
+  cy.get('.new-todo').type('My Todo{enter}');
+  cy.get('.toggle').check();
+  cy.get('.todo-list li').should('have.class', 'completed');
+});
+
+
+
+
+// 2.Verify that a user can delete a todo item:
+describe('Deletes a todo item', () => {
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('successfully deletes a todo item', () => {
+    cy.get('.new-todo').type('My Todo{enter}');
+    cy.get('.todo-list li').should('have.length', 1);
+    cy.get('.destroy').click({ force: true });
+    cy.get('.todo-list li').should('not.exist');
+  });
+});
+
+
+
+// 3. Test that verifies the editing of a todo item:
+
+it('Edits an existing todo', () => {
+  cy.get('.new-todo').type('My Todo{enter}');
+  cy.get('.todo-list li')
+    .should('have.length.gt', 0)
+    .eq(0)
+    .dblclick();
+  cy.get('.todo-list li')
+    .should('have.class', 'editing')
+    .find('.edit')
+    .type('My Edited Todo{enter}');
+  cy.get('.todo-list li')
+    .should('not.have.class', 'editing')
+    .and('contain', 'My Edited Todo');
+});
+
+// 4. Test that verifies the deletion of all todo items:
+
+it('Deletes all todos', () => {
+  cy.get('.new-todo').type('My Todo{enter}');
+  cy.get('.todo-list li')
+    .should('have.length.gt', 0)
+    .each((todo) => {
+      cy.wrap(todo).find('.destroy').click({ force: true });
+    });
+  cy.get('.todo-list li')
+    .should('not.exist');
+});
 })
